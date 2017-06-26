@@ -101,6 +101,7 @@ ENV/
 # Datasets (download them yourself)
 data/sbdd/**
 data/VOC/**
+data/ilsvrc-nets/**
 
 # Snapshots
 **/snapshot/*.caffemodel

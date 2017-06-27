@@ -1,5 +1,5 @@
-# Hyperdimensional FCN
-This is an implementation of FCN and Attention layers to recognize Hyperdimensional images.
+# HyperSpectral FCN
+This is an implementation of FCN and Attention layers to recognize HyperSpectral images.
 
 ## Prerequisites
 - Python 2.7
@@ -33,7 +33,7 @@ weights = '../path/to/your/model.caffemodel'
 ```
 
 ## Todo
-- Make module to import Hyperdimensional images
+- *Make module to import HyperSpectral images*
 - Add the Attention Layer
 - Optional CPU/GPU
 - Visualization

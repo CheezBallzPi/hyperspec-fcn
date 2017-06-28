@@ -99,11 +99,7 @@ ENV/
 .mypy_cache/
 
 # Datasets (download them yourself)
-data/sbdd/**
-data/VOC/**
-data/ilsvrc-nets/**
+data/**
 
 # Snapshots
-**/snapshot/*.caffemodel
-**/snapshot/*.solverstate
-**/snapshot/train/**
+**/snapshot/

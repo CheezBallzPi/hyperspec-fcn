@@ -11,14 +11,14 @@ def conv_relu(bottom, nout, ks=3, stride=1, pad=1):
 def max_pool(bottom, ks=2, stride=2):
     return L.Pooling(bottom, pool=P.Pooling.MAX, kernel_size=ks, stride=stride)
 
-def fcn(split):
+def fcn():
     n = caffe.NetSpec()
-    pydata_params = dict(split=split, mean=(104.00699, 116.66877, 122.67892),
+    pydata_params = dict(mean=(104.00699, 116.66877, 122.67892),
             seed=1337)
     # --- TODO: FIX THIS --- #
     pydata_params['data_dir'] = '../data/pavia/PaviaU.mat'
     
-    n.data, n.label = L.Python(module='voc_layers', layer=pylayer,
+    n.data, n.label = L.Python(module='layers', layer=pylayer,
             ntop=2, param_str=str(pydata_params))
     
     pydata_params['label_dir'] = '../data/pavia/PaviaU_gt.mat'
@@ -95,10 +95,10 @@ def fcn(split):
 
 def make_net():
     with open('train.prototxt', 'w') as f:
-        f.write(str(fcn('train')))
+        f.write(str(fcn()))
 
     with open('val.prototxt', 'w') as f:
-        f.write(str(fcn('seg11valid')))
+        f.write(str(fcn()))
 
 if __name__ == '__main__':
     make_net()

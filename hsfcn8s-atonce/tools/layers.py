@@ -2,7 +2,7 @@ import caffe
 
 import numpy as np
 import scipy.io as spio
-from PIL import Image
+from PIL import Image, ImageDraw
 
 import random
 
@@ -19,7 +19,7 @@ class HSSegDataLayer(caffe.Layer):
         Setup data layer according to parameters:
 
         - data_dir: path to data
-        - size: number of cuts to make
+        - size: size of sample
         - split: train / val / test
         - mean: tuple of mean values to subtract
         - seed: seed for randomization (default: None / current time)
@@ -34,6 +34,7 @@ class HSSegDataLayer(caffe.Layer):
         params = eval(self.param_str)
         self.data_dir = params['data_dir']
         self.label_dir = params['label_dir']
+        self.size = params['size']
         self.split = params['split']
         self.mean = np.array(params['mean'])
         self.seed = params.get('seed', None)
@@ -44,17 +45,17 @@ class HSSegDataLayer(caffe.Layer):
         # data layers have no bottoms
         if len(bottom) != 0:
             raise Exception("Do not define a bottom.")
-
-        # load indices for images and labels
-        split_f  = '{}/ImageSets/Segmentation/{}.txt'.format(self.voc_dir,
-                self.split)
-        self.indices = open(split_f, 'r').read().splitlines()
+        
+        self.image = spio.loadmat(self.data_dir)['paviaU']
+        self.labelimage = spio.loadmat(self.label_dir)['paviaU_gt']
+        
         self.idx = 0
+        self.idy = 0
 
-    def reshape(self, top):
+    def reshape(self, bottom, top):
         # load image + label image pair
-        self.data = self.load_image(self.indices[self.idx])
-        self.label = self.load_label(self.indices[self.idx])
+        self.data = self.load_image(self.idx, self.idy, self.size)
+        self.label = self.load_label(self.idx, self.idy, self.size)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -66,39 +67,76 @@ class HSSegDataLayer(caffe.Layer):
         top[1].data[...] = self.label
 
         # pick next input
-        if self.random:
-            self.idx = random.randint(0, len(self.indices)-1)
-        else:
-            self.idx += 1
-            if self.idx == len(self.indices):
-                self.idx = 0
-
+        self.idx = random.randint(0, self.image.shape[0]-1)
+        self.idy = random.randint(0, self.image.shape[1]-1)
 
     def backward(self, top, propagate_down, bottom):
         pass
 
 
-    def load_image(self, idx):
+    def load_image(self, idx, idy, size):
         """
         Load input mat and preprocess for Caffe:
         - cast to float
         - subtract mean
         - transpose to channel x height x width order
         """
-        im = spio.loadmat(self.data_dir)
-        in_ = np.array(im['paviau'], dtype=np.uint8)
-        in_ = in_[:,:,::-1]
-        in_ -= self.mean
-        in_ = in_.transpose((2,0,1))
-        return in_
+        in_ = np.array(self.image, dtype=np.uint8)
+        # Use random section
+        in_2 = in_[idx:idx+size-1,idy:idy+size-1,:]
+        in_2 = in_2[:,:,::-1]
+        # in_2 -= self.mean
+
+		# Draw rect on testing location
+        # padded = np.pad(in_, 2, 'constant', constant_values=0)
+        # show_image = Image.fromarray(padded[:,:,50])
+        # draw = ImageDraw.Draw(show_image)
+        # draw.rectangle([idx+size-1, idy+size-1, idx, idy], fill='BLACK')
+        # show_image.save('paviau.bmp')
+		
+        in_2 = in_2.transpose((2,0,1))
+        # print idx, idx + size - 1, idy, idy + size - 1, in_.shape
+        return in_2
 
 
-    def load_label(self, idx):
+    def load_label(self, idx, idy, size):
         """
         Load label image as 1 x height x width integer array of label indices.
         The leading singleton dimension is required by the loss.
         """
-        im = spio.loadmat(self.label_dir)
-        label = np.array(im['paviau_gt'], dtype=np.uint8)
-        label = label[np.newaxis, ...]
-        return label
+        label = np.array(self.labelimage, dtype=np.uint8)
+        label2 = label[np.newaxis, ...]
+        label2 = label2[:,idx:idx+size-1,idy:idy+size-1]
+        
+        # Draw rect on testing location for debug
+        # padded = np.pad(label, 2, 'constant', constant_values=0)
+        # show_image = Image.fromarray(padded)
+        # draw = ImageDraw.Draw(show_image)
+        # draw.rectangle([idx+size-1, idy+size-1, idx, idy], fill='WHITE')
+        # show_image.save('paviaul.gif')
+        
+        return label2
+        
+class AttentionLayer(caffe.Layer):
+	def setup(self, bottom, top):
+		# one top: attentioned
+        if len(top) != 1:
+        	raise Exception("Need to define one top: attentioned.")
+        # one bottom: data
+        if len(bottom) != 1:
+         	raise Exception("Need to define one bottom: data.")
+		params = eval(self.param_str)
+		self.W = params['W']
+		self.lr = params['lr']
+		
+	def reshape(self, bottom, top):
+		if top[0].shape != bottom[0].shape:
+			print "Shapes are wrong"
+		
+	def forward(self, bottom, top):
+		top[0].data[...] = bottom[0]
+		
+	def backward(self, top, propagate_down, bottom):
+		bottom[0].diff = np.multiply(self.W, top[0].diff)
+		self.W = self.W - (top[0].diff * lr)
+		

@@ -1,5 +1,6 @@
 import caffe
-import tools.surgery, tools.score
+import tools.surgery, tools.hsscore
+import matplotlib.pyplot as pp
 
 import numpy as np
 import os
@@ -28,10 +29,8 @@ del neta
 interp_layers = [k for k in solver.net.params.keys() if 'up' in k]
 tools.surgery.interp(solver.net, interp_layers)
 
-# scoring
-# TODO: Add validation stuff
-
-
 for _ in range(75):
     solver.step(4000)
-    tools.score.seg_tests(solver, False, val, layer='score')
+    # scoring
+    tools.hsscore.seg_tests(solver, False, 1000, layer='score')
+    # do a visualization

@@ -6,10 +6,11 @@ from PIL import Image, ImageDraw
 
 import random
 
+
 class HSSegDataLayer(caffe.Layer):
     """
-    Load input image and label image and 
-    reshape the net to preserve dimensions.
+    Load input image and label image and reshape
+    the net to preserve dimensions.
 
     Use this to feed data to a fully convolutional network.
     """
@@ -45,10 +46,10 @@ class HSSegDataLayer(caffe.Layer):
         # data layers have no bottoms
         if len(bottom) != 0:
             raise Exception("Do not define a bottom.")
-        
+
         self.image = spio.loadmat(self.data_dir)['paviaU']
         self.labelimage = spio.loadmat(self.label_dir)['paviaU_gt']
-        
+
         self.idx = 0
         self.idy = 0
 
@@ -60,19 +61,17 @@ class HSSegDataLayer(caffe.Layer):
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
 
-
     def forward(self, bottom, top):
         # assign output
         top[0].data[...] = self.data
         top[1].data[...] = self.label
 
         # pick next input
-        self.idx = random.randint(0, self.image.shape[0]-1)
-        self.idy = random.randint(0, self.image.shape[1]-1)
+        self.idx = random.randint(0, self.image.shape[0] - 1)
+        self.idy = random.randint(0, self.image.shape[1] - 1)
 
     def backward(self, top, propagate_down, bottom):
         pass
-
 
     def load_image(self, idx, idy, size):
         """
@@ -83,21 +82,20 @@ class HSSegDataLayer(caffe.Layer):
         """
         in_ = np.array(self.image, dtype=np.uint8)
         # Use random section
-        in_2 = in_[idx:idx+size-1,idy:idy+size-1,:]
-        in_2 = in_2[:,:,::-1]
+        in_2 = in_[idx:idx + size - 1, idy:idy + size - 1, :]
+        in_2 = in_2[:, :, ::-1]
         # in_2 -= self.mean
 
-		# Draw rect on testing location
+        # Draw rect on testing location
         # padded = np.pad(in_, 2, 'constant', constant_values=0)
         # show_image = Image.fromarray(padded[:,:,50])
         # draw = ImageDraw.Draw(show_image)
         # draw.rectangle([idx+size-1, idy+size-1, idx, idy], fill='BLACK')
         # show_image.save('paviau.bmp')
-		
-        in_2 = in_2.transpose((2,0,1))
+
+        in_2 = in_2.transpose((2, 0, 1))
         # print idx, idx + size - 1, idy, idy + size - 1, in_.shape
         return in_2
-
 
     def load_label(self, idx, idy, size):
         """
@@ -106,37 +104,38 @@ class HSSegDataLayer(caffe.Layer):
         """
         label = np.array(self.labelimage, dtype=np.uint8)
         label2 = label[np.newaxis, ...]
-        label2 = label2[:,idx:idx+size-1,idy:idy+size-1]
-        
+        label2 = label2[:, idx:idx + size - 1, idy:idy + size - 1]
+
         # Draw rect on testing location for debug
         # padded = np.pad(label, 2, 'constant', constant_values=0)
         # show_image = Image.fromarray(padded)
         # draw = ImageDraw.Draw(show_image)
         # draw.rectangle([idx+size-1, idy+size-1, idx, idy], fill='WHITE')
         # show_image.save('paviaul.gif')
-        
+
         return label2
-        
+
+
 class AttentionLayer(caffe.Layer):
-	def setup(self, bottom, top):
-		# one top: attentioned
+
+    def setup(self, bottom, top):
+                # one top: attentioned
         if len(top) != 1:
-        	raise Exception("Need to define one top: attentioned.")
+            raise Exception("Need to define one top: attentioned.")
         # one bottom: data
         if len(bottom) != 1:
-         	raise Exception("Need to define one bottom: data.")
-		params = eval(self.param_str)
-		self.W = params['W']
-		self.lr = params['lr']
-		
-	def reshape(self, bottom, top):
-		if top[0].shape != bottom[0].shape:
-			print "Shapes are wrong"
-		
-	def forward(self, bottom, top):
-		top[0].data[...] = bottom[0]
-		
-	def backward(self, top, propagate_down, bottom):
-		bottom[0].diff = np.multiply(self.W, top[0].diff)
-		self.W = self.W - (top[0].diff * lr)
-		
+            raise Exception("Need to define one bottom: data.")
+            params = eval(self.param_str)
+            self.W = params['W']
+            self.lr = params['lr']
+
+        def reshape(self, bottom, top):
+            if top[0].shape != bottom[0].shape:
+                print "Shapes are wrong"
+
+        def forward(self, bottom, top):
+            top[0].data[...] = bottom[0]
+
+        def backward(self, top, propagate_down, bottom):
+            bottom[0].diff = np.multiply(self.W, top[0].diff)
+            self.W = self.W - (top[0].diff * lr)

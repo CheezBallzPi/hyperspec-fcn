@@ -11,11 +11,12 @@ class hypermat:
     	# data_path is /path/to/pavia
 		immat = spio.loadmat(data_path)
 		lbmat = spio.loadmat(label_path)
-    	lbmat = lbmat[np.newaxis, ...]
+		
+        lbmat = lbmat[np.newaxis, ...]
     	# self.classes = ['Asphalt','Meadows','Gravel','Trees',
     	# 				'Painted metal sheets','Bare Soil',
     	# 				'Bitumen','Self-Blocking Bricks','Shadows']
-    	self.classes = classes
+        self.classes = classes
     
     def load_band(self, band):
     	return immat[:,:,band]

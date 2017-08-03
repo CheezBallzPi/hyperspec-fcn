@@ -18,3 +18,4 @@ net.blobs['data'].data[...] = in_
 # run net and take argmax for prediction
 net.forward()
 out = net.blobs['score'].data[0].argmax(axis=0)
+numpy.save("out", out)

@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+import copy
 
 import caffe
 
@@ -18,4 +19,7 @@ net.blobs['data'].data[...] = in_
 # run net and take argmax for prediction
 net.forward()
 out = net.blobs['score'].data[0].argmax(axis=0)
-numpy.save("out", out)
+out_8 = np.empty_like(out, dtype=np.uint8)
+np.copyto(out_8, out, casting='unsafe')
+img = Image.fromarray(out_8)
+img.save("infer_out.png")

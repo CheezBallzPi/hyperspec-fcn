@@ -9,7 +9,7 @@ lr_policy: "fixed"
 # lr for unnormalized softmax
 base_lr: 1e-10
 # high momentum
-momentum: 0.99
+momentum: 0.5
 # no gradient accumulation
 iter_size: 1
 max_iter: 300000

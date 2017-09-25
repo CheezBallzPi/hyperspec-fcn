@@ -24,7 +24,7 @@ def compute_hist(net, save_dir, iteration, layer='score', gt='label'):
 
         if save_dir:
             im = Image.fromarray(net.blobs[layer].data[0].argmax(0).astype(np.uint8), mode='P')
-            im.save(os.path.join(save_dir, idx + '.png'))
+            im.save(os.path.join(save_dir, iteration + '.png'))
         # compute the loss as well
         loss += net.blobs['loss'].data.flat[0]
     return hist, loss / iteration

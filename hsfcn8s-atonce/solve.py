@@ -1,5 +1,5 @@
 import caffe
-import tools.surgery, tools.hsscore
+import tools.surgery, tools.hsscore, hsnet
 import matplotlib.pyplot as pp
 
 import numpy as np
@@ -11,7 +11,7 @@ try:
     setproctitle.setproctitle(os.path.basename(os.getcwd()))
 except:
     pass
-
+hsnet.make_net()
 weights = '../data/ilsvrc-nets/VGG_ILSVRC_16_layers.caffemodel'
 
 # init

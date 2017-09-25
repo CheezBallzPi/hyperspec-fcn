@@ -9,22 +9,25 @@ from PIL import Image
 
 class hypermat:
 
-    def __init__(self, data_path, label_path, classes):
+    def __init__(self, data_path, label_path):
         # data_path is /path/to/pavia
-        immat = spio.loadmat(data_path)
-        lbmat = spio.loadmat(label_path)
+        self.immat = spio.loadmat(data_path)['paviaU']
+        print self.immat.shape
+        self.lbmat = spio.loadmat(label_path)['paviaU_gt']
 
-        lbmat = lbmat[np.newaxis, ...]
-        # self.classes = ['Asphalt','Meadows','Gravel','Trees',
-        #               'Painted metal sheets','Bare Soil',
-        #               'Bitumen','Self-Blocking Bricks','Shadows']
-        self.classes = classes
+        # lbmat = lbmat[np.newaxis, ...]
+        self.classes = ['Asphalt','Meadows','Gravel','Trees',
+                      'Painted metal sheets','Bare Soil',
+                      'Bitumen','Self-Blocking Bricks','Shadows']
+        # self.classes = classes
+        
     
     def load_band(self, band):
-        return immat[:,:,band]
+        return self.immat[:,:,band]
         
     def load_image(self):
-        return immat
+        return self.immat
         
     def load_labels(self):
-        return lbmat
+        return self.lbmat
+    

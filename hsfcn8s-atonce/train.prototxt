@@ -6,7 +6,7 @@ layer {
   python_param {
     module: "tools.layers"
     layer: "HSSegDataLayer"
-    param_str: "{\'data_dir\': \'../data/pavia/PaviaU.mat\', \'label_dir\': \'../data/pavia/PaviaU_gt.mat\', \'seed\': 1337, \'size\': 20, \'split\': \'train\', \'mean\': (104.00699, 116.66877, 122.67892)}"
+    param_str: "{\'data_dir\': \'../data/pavia/PaviaU.mat\', \'label_dir\': \'../data/pavia/PaviaU_gt.mat\', \'sbdd_dir\': \'../data/sbdd/dataset\', \'split\': \'train\', \'seed\': 1337, \'size\': 30}"
   }
 }
 layer {
@@ -23,7 +23,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 64
+    num_output: 65
     pad: 100
     kernel_size: 3
     stride: 1
@@ -486,7 +486,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     pad: 0
     kernel_size: 1
   }
@@ -500,7 +500,7 @@ layer {
     lr_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     bias_term: false
     kernel_size: 4
     stride: 2
@@ -535,7 +535,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     pad: 0
     kernel_size: 1
   }
@@ -570,7 +570,7 @@ layer {
     lr_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     bias_term: false
     kernel_size: 4
     stride: 2
@@ -605,7 +605,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     pad: 0
     kernel_size: 1
   }
@@ -640,7 +640,7 @@ layer {
     lr_mult: 0
   }
   convolution_param {
-    num_output: 21
+    num_output: 9
     bias_term: false
     kernel_size: 16
     stride: 8

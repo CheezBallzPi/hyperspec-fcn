@@ -2,7 +2,7 @@ import caffe
 from caffe import layers as L, params as P
 from caffe.coord_map import crop
 
-def conv_relu(bottom, nout, ks=3, stride=1, pad=1, group=1):
+def conv_relu(bottom, nout, ks, stride=1, pad=1, group=1):
 	if group==1:
 		conv = L.Convolution(bottom, kernel_size=ks, stride=stride, num_output=nout, pad=pad,
 		param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
@@ -31,19 +31,21 @@ def fcn(split):
 	# ---------------------- #
 
     # the base net
-    n.conv1, n.relu1 = conv_relu(n.data, 65, group=1)
+    n.conv1, n.relu1 = conv_relu(n.data, 32, 4)
     n.pool1 = max_pool(n.relu1)
 
-    n.conv2, n.relu2 = conv_relu(n.pool1, 128)
+    n.conv2, n.relu2 = conv_relu(n.pool1, 64, 5)
     n.pool2 = max_pool(n.relu2)
 
-    # fully conv
-    n.fc6, n.relu6 = conv_relu(n.pool2, 4096, ks=7, pad=0)
-    n.drop6 = L.Dropout(n.relu6, dropout_ratio=0.5, in_place=True)
-    n.fc7, n.relu7 = conv_relu(n.drop6, 4096, ks=1, pad=0)
-    n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)
+    n.conv2, n.relu2 = conv_relu(n.score, 128, 4)
 
-    n.score = crop(n.upscore8, n.data)
+    # fully conv
+    #n.fc6, n.relu6 = conv_relu(n.pool2, 4096, ks=7, pad=0)
+    #n.drop6 = L.Dropout(n.relu6, dropout_ratio=0.5, in_place=True)
+    #n.fc7, n.relu7 = conv_relu(n.drop6, 4096, ks=1, pad=0)
+    #n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)
+
+    #n.score = crop(n.upscore8, n.data)
     n.loss = L.SoftmaxWithLoss(n.score, n.label,
             loss_param=dict(normalize=False, ignore_label=255))
 

@@ -35,9 +35,10 @@ class HSSegDataLayer(caffe.Layer):
         params = eval(self.param_str)
         self.data_dir = params['data_dir']
         self.label_dir = params['label_dir']
+        self.batch_size = params['batch_size']
         self.size = params['size']
-        self.split = params['split']
-        self.mean = np.array(params['mean'])
+        # self.split = params['split']
+        # self.mean = np.array(params['mean'])
         self.seed = params.get('seed', None)
 
         # two tops: data and label
@@ -49,26 +50,37 @@ class HSSegDataLayer(caffe.Layer):
 
         self.image = spio.loadmat(self.data_dir)['paviaU']
         self.labelimage = spio.loadmat(self.label_dir)['paviaU_gt']
-
+	
+	
         self.idx = 0
         self.idy = 0
 
-    def reshape(self, bottom, top):
-        # load image + label image pair
+	# load image + label image pair
         self.data = self.load_image(self.idx, self.idy, self.size)
         self.label = self.load_label(self.idx, self.idy, self.size)
+
+
+    def reshape(self, bottom, top):
+        #print self.label
         # reshape tops to fit (leading 1 is for batch dimension)
-        top[0].reshape(1, *self.data.shape)
-        top[1].reshape(1, *self.label.shape)
+        top[0].reshape(self.batch_size, *self.data.shape)
+        top[1].reshape(self.batch_size, *self.label.shape)
 
     def forward(self, bottom, top):
-        # assign output
-        top[0].data[...] = self.data
-        top[1].data[...] = self.label
+        for itt in range(self.batch_size):
+            # load image + label image pair
+            self.data = self.load_image(self.idx, self.idy, self.size)
+            self.label = self.load_label(self.idx, self.idy, self.size)
 
-        # pick next input
-        self.idx = random.randint(0, self.image.shape[0] - 1)
-        self.idy = random.randint(0, self.image.shape[1] - 1)
+            # assign output
+            top[0].data[itt,...] = self.data
+            top[1].data[itt,...] = self.label
+
+            # pick next input
+            self.idx = random.randint(0, self.image.shape[0] - 1 - self.size)
+            self.idy = random.randint(0, self.image.shape[1] - 1 - self.size)
+            #self.idx = 4
+            #self.idx = 90
 
     def backward(self, top, propagate_down, bottom):
         pass
@@ -82,9 +94,12 @@ class HSSegDataLayer(caffe.Layer):
         """
         in_ = np.array(self.image, dtype=np.uint8)
         # Use random section
-        in_2 = in_[idx:idx + size - 1, idy:idy + size - 1, :]
-        in_2 = in_2[:, :, ::-1]
+        
+        in_ = in_[idx:idx + size, idy:idy + size, :]
+        in_ = in_[:, :, ::-1]
         # in_2 -= self.mean
+
+
 
         # Draw rect on testing location
         # padded = np.pad(in_, 2, 'constant', constant_values=0)
@@ -93,9 +108,12 @@ class HSSegDataLayer(caffe.Layer):
         # draw.rectangle([idx+size-1, idy+size-1, idx, idy], fill='BLACK')
         # show_image.save('paviau.bmp')
 
-        in_2 = in_2.transpose((2, 0, 1))
+        in_ = in_.transpose((2, 0, 1))
         # print idx, idx + size - 1, idy, idy + size - 1, in_.shape
-        return in_2
+        # print in_2.shape
+        #in_3 = np.concatenate([in_, np.zeros((2, self.size, self.size))])
+        # print in_3.shape
+        return in_
 
     def load_label(self, idx, idy, size):
         """
@@ -104,7 +122,7 @@ class HSSegDataLayer(caffe.Layer):
         """
         label = np.array(self.labelimage, dtype=np.uint8)
         label2 = label[np.newaxis, ...]
-        label2 = label2[:, idx:idx + size - 1, idy:idy + size - 1]
+        label2 = label2[:, idx:idx + size, idy:idy + size]
 
         # Draw rect on testing location for debug
         # padded = np.pad(label, 2, 'constant', constant_values=0)

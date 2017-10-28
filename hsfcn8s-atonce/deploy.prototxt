@@ -1,14 +1,14 @@
 layer {
-  name: "data"
-  type: "Python"
+  name: "input"
+  type: "Input"
   top: "data"
-  top: "label"
-  python_param {
-    module: "tools.layers"
-    layer: "HSSegDataLayer"
-    param_str: "{\'data_dir\': \'../data/pavia/PaviaU.mat\', \'batch_size\': 10, \'label_dir\': \'../data/pavia/PaviaU_gt.mat\', \'seed\': 1337, \'split\': \'train\', \'size\': 27}"
+  input_param {
+    # These dimensions are purely for sake of example;
+    # see infer.py for how to reshape the net to the given input size.
+    shape { dim: 1 dim: 103 dim: 610 dim: 340 }
   }
 }
+
 layer {
   name: "conv1"
   type: "Convolution"
@@ -200,16 +200,5 @@ layer {
     bias_term: false
     kernel_size: 25
     stride: 1
-  }
-}
-layer {
-  name: "loss"
-  type: "SoftmaxWithLoss"
-  bottom: "upscore"
-  bottom: "label"
-  top: "loss"
-  loss_param {
-    ignore_label: 255
-    normalize: false
   }
 }

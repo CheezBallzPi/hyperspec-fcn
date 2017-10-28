@@ -24,7 +24,7 @@ def compute_hist(net, save_dir, iteration, layer='score', gt='label'):
 
         if save_dir:
             im = Image.fromarray(net.blobs[layer].data[0].argmax(0).astype(np.uint8), mode='P')
-            im.save(os.path.join(save_dir, idx + '.png'))
+            im.save(os.path.join(save_dir, iteration + '.png'))
         # compute the loss as well
         loss += net.blobs['loss'].data.flat[0]
     return hist, loss / iteration
@@ -34,7 +34,7 @@ def seg_tests(solver, save_format, iterations=200, layer='score', gt='label'):
     solver.test_nets[0].share_with(solver.net)
     do_seg_tests(solver.test_nets[0], solver.iter, save_format, iterations, layer, gt)
 
-def do_seg_tests(net, iter, save_format, iterations, layer='score', gt='label'):
+def do_seg_tests(net, iter, save_format, iterations, layer='upscore', gt='label'):
     n_cl = net.blobs[layer].channels
     if save_format:
         save_format = save_format.format(iter)

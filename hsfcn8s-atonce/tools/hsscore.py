@@ -34,7 +34,7 @@ def seg_tests(solver, save_format, iterations=200, layer='score', gt='label'):
     solver.test_nets[0].share_with(solver.net)
     do_seg_tests(solver.test_nets[0], solver.iter, save_format, iterations, layer, gt)
 
-def do_seg_tests(net, iter, save_format, iterations, layer='score', gt='label'):
+def do_seg_tests(net, iter, save_format, iterations, layer='upscore', gt='label'):
     n_cl = net.blobs[layer].channels
     if save_format:
         save_format = save_format.format(iter)

@@ -16,13 +16,13 @@ in_ = in_.transpose((2,0,1))
 
 
 # load net
-net = caffe.Net('deploy.prototxt', 'snapshot/train_iter_50000.caffemodel', caffe.TEST)
+net = caffe.Net('deploy.prototxt', 'snapshot/train_iter_20000.caffemodel', caffe.TEST)
 # shape for input (data blob is N x C x H x W), set data
 net.blobs['data'].reshape(1, *in_.shape)
 net.blobs['data'].data[...] = in_
 # run net and take argmax for prediction
 net.forward()
-out = net.blobs['score'].data[0].argmax(axis=0).squeeze()
+out = net.blobs['upscore'].data[0].argmax(axis=0).squeeze()
 # np.savetxt("out.txt",net.blobs['score'].data[0,:,:,:])
 out_8 = np.empty_like(out, dtype=np.uint8)
 np.copyto(out_8, out, casting='unsafe')

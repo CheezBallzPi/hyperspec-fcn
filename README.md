@@ -1,6 +1,8 @@
 # HyperSpectral FCN
 This is an implementation of FCN and Attention layers to recognize HyperSpectral images.
 
+## NOTE: This README is EXTREMELY outdated. It's so outdated, in fact, that pretty much everything after this line is irrelevant. I'll fix it later.
+
 ## Prerequisites
 - Python 2.7
   - Numpy

@@ -61,7 +61,7 @@ class HSSegDataLayer(caffe.Layer):
 
 
     def reshape(self, bottom, top):
-        #print self.label
+        #print (self.label)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(self.batch_size, *self.data.shape)
         top[1].reshape(self.batch_size, *self.label.shape)
@@ -109,10 +109,10 @@ class HSSegDataLayer(caffe.Layer):
         # show_image.save('paviau.bmp')
 
         in_ = in_.transpose((2, 0, 1))
-        # print idx, idx + size - 1, idy, idy + size - 1, in_.shape
-        # print in_2.shape
+        # print (idx, idx + size - 1, idy, idy + size - 1, in_.shape)
+        # print (in_2.shape)
         #in_3 = np.concatenate([in_, np.zeros((2, self.size, self.size))])
-        # print in_3.shape
+        # print (in_3.shape)
         return in_
 
     def load_label(self, idx, idy, size):
@@ -149,7 +149,7 @@ class AttentionLayer(caffe.Layer):
 
         def reshape(self, bottom, top):
             if top[0].shape != bottom[0].shape:
-                print "Shapes are wrong"
+                print ("Shapes are wrong")
 
         def forward(self, bottom, top):
             top[0].data[...] = bottom[0]

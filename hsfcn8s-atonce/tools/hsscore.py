@@ -30,7 +30,7 @@ def compute_hist(net, save_dir, iteration, layer='score', gt='label'):
     return hist, loss / iteration
 
 def seg_tests(solver, save_format, iterations=200, layer='score', gt='label'):
-    print '>>>', datetime.now(), 'Begin seg tests'
+    print ('>>>', datetime.now(), 'Begin seg tests')
     solver.test_nets[0].share_with(solver.net)
     do_seg_tests(solver.test_nets[0], solver.iter, save_format, iterations, layer, gt)
 
@@ -40,17 +40,16 @@ def do_seg_tests(net, iter, save_format, iterations, layer='upscore', gt='label'
         save_format = save_format.format(iter)
     hist, loss = compute_hist(net, save_format, iterations, layer, gt)
     # mean loss
-    print '>>>', datetime.now(), 'Iteration', iter, 'loss', loss
+    print ('>>>', datetime.now(), 'Iteration', iter, 'loss', loss)
     # overall accuracy
     acc = np.diag(hist).sum() / hist.sum()
-    print '>>>', datetime.now(), 'Iteration', iter, 'overall accuracy', acc
+    print ('>>>', datetime.now(), 'Iteration', iter, 'overall accuracy', acc)
     # per-class accuracy
     acc = np.diag(hist) / hist.sum(1)
-    print '>>>', datetime.now(), 'Iteration', iter, 'mean accuracy', np.nanmean(acc)
+    print ('>>>', datetime.now(), 'Iteration', iter, 'mean accuracy', np.nanmean(acc))
     # per-class IU
     iu = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
-    print '>>>', datetime.now(), 'Iteration', iter, 'mean IU', np.nanmean(iu)
+    print ('>>>', datetime.now(), 'Iteration', iter, 'mean IU', np.nanmean(iu))
     freq = hist.sum(1) / hist.sum()
-    print '>>>', datetime.now(), 'Iteration', iter, 'fwavacc', \
-            (freq[freq > 0] * iu[freq > 0]).sum()
+    print ('>>>', datetime.now(), 'Iteration', iter, 'fwavacc', freq[freq > 0] * iu[freq > 0]).sum()
     return hist

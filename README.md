@@ -1,24 +1,17 @@
 # HyperSpectral FCN
 This is an implementation of FCN and Attention layers to recognize HyperSpectral images.
 
-## Note: This README is EXTREMELY outdated. It's so outdated, in fact, that pretty much everything after this line is irrelevant. I'll fix it later.
-
 ## Prerequisites
 - Python 2.7
-  - Numpy
-  - Caffe
-  - Scipy
+  - Caffe 
 - An Nvidia GPU (Not required but recommended)
-- A Training and Validation dataset
-- VGG model trained weights
+- A Hyperspectral image (currently only Pavia University Dataset works)
 
 ## Setup
 Anaconda is recommended for Python and its prerequisites. This implementation uses Python 2.7 so be sure to install the right one.
 You can install Anaconda from [here](https://www.continuum.io/downloads).
 
-The models are currently made to train from the VOC 2012 dataset and SBD dataset. Put these datasets in `data/VOC` and `data/sbdd` respectively.
-
-You can get the trained weights for the VGG model on the Caffe Model Zoo or [right here](https://gist.github.com/ksimonyan/211839e770f7b538e2d8#file-readme-md). Put the `.caffemodel` file in `data/ilsvrc-nets`.
+The models are currently made to train from the Pavia University dataset. Put this image in `data/pavia`.
 
 ## Training
 To train this model, run `solve.py` in `fcn32s`, then in `fcn16s`, and finally in `fcn8s`. Alternatively, run `solve.py` in `fcn8s-atonce`.
@@ -35,7 +28,5 @@ weights = '../path/to/your/model.caffemodel'
 ```
 
 ## Todo
-- *Make module to import HyperSpectral images*
 - Add the Attention Layer
-- Optional CPU/GPU
 - Visualization

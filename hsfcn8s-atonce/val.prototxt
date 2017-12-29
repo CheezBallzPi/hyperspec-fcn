@@ -6,7 +6,7 @@ layer {
   python_param {
     module: "tools.layers"
     layer: "HSSegDataLayer"
-    param_str: "{\'data_dir\': \'../data/pavia/PaviaU.mat\', \'batch_size\': 10, \'label_dir\': \'../data/pavia/PaviaU_gt.mat\', \'seed\': 1337, \'split\': \'val\', \'size\': 27}"
+    param_str: "{\'seed\': 1337, \'size\': 27, \'split\': \'val\', \'data_dir\': \'../data/pavia/PaviaU.mat\', \'label_dir\': \'../data/pavia/PaviaU_gt.mat\', \'batch_size\': 10}"
   }
 }
 layer {

@@ -6,9 +6,9 @@ from matplotlib import pyplot
 import caffe
 
 # load image, switch to BGR, subtract mean, and make dims C x H x W for Caffe
-print mh.hypermat('../data/pavia/PaviaU.mat','../data/pavia/PaviaU_gt.mat').load_image().shape
+print (mh.hypermat('../data/pavia/PaviaU.mat','../data/pavia/PaviaU_gt.mat').load_image().shape)
 in_ = mh.hypermat('../data/pavia/PaviaU.mat','../data/pavia/PaviaU_gt.mat').load_image()
-print in_.shape
+print (in_.shape)
 #in_ = np.concatenate([in_, np.zeros((610, 340, 2))], axis=2)
 #in_ = in_[4:4 + 30, 90:90 + 30, :]
 in_ = in_[:,:,::-1]
@@ -31,12 +31,12 @@ img = Image.fromarray(out_8)
 img.save("infer_out.png")
 #pyplot.imshow(out_8)
 #pyplot.imshow(out)
-print out, out_8
-#print net.params['conv1_1'][0].data[...]
-#print net.params['conv2_1'][0].data[...]
-#print net.params['conv3_1'][0].data[...]
-#print net.params['conv4_1'][0].data[...]
-#print net.params['conv5_1'][0].data[...]
-#print net.params['fc6'][0].data[...]
-print net.params['fc7'][0].data[...]
-#print net.params['upscore2'].data[...]
+print (out, out_8)
+#print (net.params['conv1_1'][0].data[...])
+#print (net.params['conv2_1'][0].data[...])
+#print (net.params['conv3_1'][0].data[...])
+#print (net.params['conv4_1'][0].data[...])
+#print (net.params['conv5_1'][0].data[...])
+#print (net.params['fc6'][0].data[...])
+print (net.params['fc7'][0].data[...])
+#print (net.params['upscore2'].data[...])

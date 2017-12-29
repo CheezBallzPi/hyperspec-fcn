@@ -12,7 +12,7 @@ class hypermat:
     def __init__(self, data_path, label_path):
         # data_path is /path/to/pavia
         self.immat = spio.loadmat(data_path)['paviaU']
-        print self.immat.shape
+        print (self.immat.shape)
         self.lbmat = spio.loadmat(label_path)['paviaU_gt']
 
         # lbmat = lbmat[np.newaxis, ...]

@@ -103,3 +103,4 @@ data/**
 
 # Snapshots
 **/snapshot/
+**/cp/

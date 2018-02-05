@@ -21,11 +21,11 @@ def net():
     model.add(L.Flatten())
     model.add(L.Dense(128, activation='relu'))
     model.add(L.Dropout(.5))
-    model.add(L.Dense(9, activation='softmax'))
+    model.add(L.Dense(10, activation='softmax'))
 
     # Loss
-    model.compile(optimizer='adagrad',
-                  loss='mean_squared_error',
+    model.compile(optimizer='sgd',
+                  loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
     return model

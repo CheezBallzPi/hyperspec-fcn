@@ -23,8 +23,10 @@ zerosY[offset : y.shape[0] + offset, offset : y.shape[1] + offset] = y
 y = zerosY
 print(X.shape, y.shape)
 
+mb.get_samples(X, y, 15, 9, 27)
+
 # Make batch
-(X_train, y_train) = mb.make_batch(X, y, 10000)
+(X_train, y_train) = mb.make_batch(X, y, 10000, 9, 27)
 
 # Train!
 logger = keras.callbacks.CSVLogger("train.log")

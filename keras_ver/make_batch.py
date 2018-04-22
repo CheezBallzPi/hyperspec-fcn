@@ -12,7 +12,7 @@ def make_sample(img, x, y, window):
 def virt(smp1, smp2):
     # Makes virtual sample by changing radiation level
     # new = a(old) + bn
-    (a, b) = (np.random.random(), np.random.normal(0, 20))
+    (a, b) = (np.random.random(), 0.01*np.random.normal(0, 1))
     return np.dot(a,smp1) + np.dot((1 - a), smp2) + b
 
 def reshape(smp):
@@ -28,16 +28,18 @@ def get_samples(X, y, num, classes, window):
     samples = np.ndarray((classes,num,window,window,103))
     print(count)
     while(count.min() != num):
-        (xpos, ypos) = (np.random.randint(halfwindow - 1, X.shape[0] - halfwindow), 
-                        np.random.randint(halfwindow - 1, X.shape[1] - halfwindow))
+        (xpos, ypos) = (np.random.randint(halfwindow, X.shape[0] - halfwindow),
+                        np.random.randint(halfwindow, X.shape[1] - halfwindow))
         label = int(y[xpos, ypos])
         if(label == 0):
             continue
         if(count[label - 1] != num):
             samples[label - 1, int(count[label - 1])] = make_sample(X, xpos, ypos, window)
             count[label - 1] += 1
+            #print('ylabel:', y[xpos, ypos])
         #print(count)
     #print(samples)
+
     return samples
 
 
@@ -51,6 +53,7 @@ def make_batch(X, y, num, classes, window):
     print(window)
     samples = get_samples(X, y, 15, classes, window)
     print(samples.shape)
+
     for n in range(num):
         rand_class = np.random.randint(0, classes - 1)
         new = reshape(virt(samples[rand_class, np.random.randint(0, 14)], 
@@ -60,7 +63,9 @@ def make_batch(X, y, num, classes, window):
         if n % 1000 == 0:
             print(n)
     print(X_batch.shape, y_batch.shape)
-    y_batch = np_utils.to_categorical(y_batch, 10)
+
+    y_batch = np_utils.to_categorical(y_batch, 9)
     print(X_batch.shape, y_batch.shape)
+
     return (X_batch, y_batch)
 

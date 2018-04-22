@@ -1,6 +1,10 @@
+
 import net, make_batch as mb
 import keras, numpy as np
 import scipy.io as sp
+
+
+
 
 np.random.seed(1337)
 
@@ -9,6 +13,11 @@ model = net.net()
 X = sp.loadmat("../data/pavia/PaviaU.mat")['paviaU']
 #X = np.ones((4,4,4))
 y = sp.loadmat("../data/pavia/PaviaU_gt.mat")['paviaU_gt']
+
+#mean subtraction and normalization
+X_mean = np.mean(X, axis=(0,1))
+X = X - X_mean
+X = X / (np.amax(X, axis=(0,1)) - np.amin(X, axis=(0,1)))
 
 # 2 options here, either 0 pad by 13 around the data
 # or just never test with the outside border,
@@ -23,7 +32,7 @@ zerosY[offset : y.shape[0] + offset, offset : y.shape[1] + offset] = y
 y = zerosY
 print(X.shape, y.shape)
 
-mb.get_samples(X, y, 15, 9, 27)
+#mb.get_samples(X, y, 15, 9, 27)
 
 # Make batch
 (X_train, y_train) = mb.make_batch(X, y, 10000, 9, 27)

@@ -10,9 +10,9 @@ np.random.seed(1337)
 
 model = net.net()
 
-X = sp.loadmat("../data/pavia/PaviaU.mat")['paviaU']
+X = sp.loadmat("data/pavia/PaviaU.mat")['paviaU']
 #X = np.ones((4,4,4))
-y = sp.loadmat("../data/pavia/PaviaU_gt.mat")['paviaU_gt']
+y = sp.loadmat("data/pavia/PaviaU_gt.mat")['paviaU_gt']
 
 #mean subtraction and normalization
 X_mean = np.mean(X, axis=(0,1))

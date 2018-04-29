@@ -3,9 +3,6 @@ import net, make_batch as mb
 import keras, numpy as np
 import scipy.io as sp
 
-
-
-
 np.random.seed(1337)
 
 model = net.net()
@@ -34,10 +31,11 @@ print(X.shape, y.shape)
 
 #mb.get_samples(X, y, 15, 9, 27)
 
-# Make batch
-(X_train, y_train) = mb.make_batch(X, y, 10000, 9, 27)
+# Make batches
+(X_full, y_full, split) = mb.make_batch(X, y, 3000, 10, 9, 27)
+print(X_full.shape, y_full.shape, split)
 
 # Train!
 logger = keras.callbacks.CSVLogger("train.log")
 cp = keras.callbacks.ModelCheckpoint("./cp/weights.{epoch:02d}.hdf5")
-model.fit(X_train, y_train, batch_size=32, nb_epoch=10, callbacks=[logger,cp])
+model.fit(X_full, y_full, batch_size=32, nb_epoch=10, validation_split=split, callbacks=[logger,cp])

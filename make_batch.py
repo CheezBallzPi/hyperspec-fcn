@@ -43,29 +43,41 @@ def get_samples(X, y, num, classes, window):
     return samples
 
 
-def make_batch(X, y, num, classes, window):
+def make_batch(X, y, numt, numv, classes, window):
     # Converts img into a batch of all the data points to train on
     # Samples are 15 of each class.
+    # Also makes validation sets
+    # Numv is number of images PER CLASS
     halfwindow = int(window / 2)
-    X_batch = np.ndarray((num, 103, window, window, 1))
-    y_batch = np.ndarray((num))
+    X_train = np.ndarray((numt, 103, window, window, 1))
+    y_train = np.ndarray((numt))
+    X_val = np.ndarray((numv * classes, 103, window, window, 1))
+    y_val = np.ndarray((numv * classes))
+
     print(X.shape)
     print(window)
-    samples = get_samples(X, y, 15, classes, window)
-    print(samples.shape)
+    samples_t = get_samples(X, y, 15, classes, window)
+    samples_v = get_samples(X, y, numv, classes, window)
+    print(samples_t.shape, samples_v.shape)
 
-    for n in range(num):
-        rand_class = np.random.randint(0, classes - 1)
-        new = reshape(virt(samples[rand_class, np.random.randint(0, 14)], 
-                           samples[rand_class, np.random.randint(0, 14)]))
-        X_batch[n] = new
-        y_batch[n] = rand_class
-        if n % 1000 == 0:
-            print(n)
-    print(X_batch.shape, y_batch.shape)
+    for n in range(numt):
+        rand_class = np.random.randint(0, classes)
+        new = reshape(virt(samples_t[rand_class, np.random.randint(0, 14)], 
+                           samples_t[rand_class, np.random.randint(0, 14)]))
+        X_train[n] = new
+        y_train[n] = rand_class
+    print(X_train.shape, y_train.shape)
+    count = 0
+    for n in range(classes):
+        for m in range(numv):
+            X_val[count] = reshape(samples_v[n, m])
+            y_val[count] = n
+            count+=1
+    print(X_val.shape, y_val.shape)
+    y_train = np_utils.to_categorical(y_train, 9)
+    y_val = np_utils.to_categorical(y_val, 9)
+    print(X_train.shape, y_train.shape)
+    print(y_train, y_val)
 
-    y_batch = np_utils.to_categorical(y_batch, 9)
-    print(X_batch.shape, y_batch.shape)
-
-    return (X_batch, y_batch)
+    return (np.concatenate((X_train,X_val)), np.concatenate((y_train,y_val)), (numv * classes) / ((numv * classes) + numt))
 

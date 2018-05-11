@@ -1,4 +1,3 @@
-
 import net, make_batch as mb
 import keras, numpy as np
 import scipy.io as sp
@@ -10,6 +9,9 @@ model = net.net()
 X = sp.loadmat("data/pavia/PaviaU.mat")['paviaU']
 #X = np.ones((4,4,4))
 y = sp.loadmat("data/pavia/PaviaU_gt.mat")['paviaU_gt']
+
+classnum = [[548,  540,   392,  542,  256,  532,  375, 514,  231],
+            [5472, 13750, 1331, 2573, 1122, 4572, 981, 3363, 776]]
 
 #mean subtraction and normalization
 X_mean = np.mean(X, axis=(0,1))
@@ -32,10 +34,10 @@ print(X.shape, y.shape)
 #mb.get_samples(X, y, 15, 9, 27)
 
 # Make batches
-(X_full, y_full, split) = mb.make_batch(X, y, 3000, 10, 9, 27)
+(X_full, y_full, split) = mb.make_batch(X, y, classnum, 9, 27)
 print(X_full.shape, y_full.shape, split)
 
 # Train!
-logger = keras.callbacks.CSVLogger("train.log")
+logger = keras.callbacks.CSVLogger("logs/train.log")
 cp = keras.callbacks.ModelCheckpoint("./cp/weights.{epoch:02d}.hdf5")
 model.fit(X_full, y_full, batch_size=32, nb_epoch=10, validation_split=split, callbacks=[logger,cp])

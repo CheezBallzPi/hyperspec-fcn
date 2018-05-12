@@ -10,8 +10,11 @@ X = sp.loadmat("data/pavia/PaviaU.mat")['paviaU']
 #X = np.ones((4,4,4))
 y = sp.loadmat("data/pavia/PaviaU_gt.mat")['paviaU_gt']
 
-classnum = [[548,  540,   392,  542,  256,  532,  375, 514,  231],
-            [5472, 13750, 1331, 2573, 1122, 4572, 981, 3363, 776]]
+#classnum = [[548,  540,   392,  542,  256,  532,  375, 514,  231],
+#            [5472, 13750, 1331, 2573, 1122, 4572, 981, 3363, 776]]
+
+classnum = [[54,  54,   39,  54,  25,  53,  37, 51,  23],
+            [547, 1375, 133, 257, 112, 457, 98, 336, 77]]
 
 #mean subtraction and normalization
 X_mean = np.mean(X, axis=(0,1))

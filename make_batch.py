@@ -1,8 +1,7 @@
 import numpy as np
 from keras.utils import np_utils
-
-import gc
 import objgraph
+import sys
 
 np.random.seed(1337)
 
@@ -21,7 +20,7 @@ def virt(smp1, smp2):
 def reshape(smp):
     # Reshapes into (1,103,27,27,1)
     X = np.transpose(smp, (2,0,1))
-    X = X[np.newaxis, ..., np.newaxis]
+    X = X[..., np.newaxis]
     return X
 
 def get_samples(X, y, num, classes, window):
@@ -50,7 +49,7 @@ def make_batch(X, y, num, classes, window):
     # Samples are 15 of each class.
     # Also makes validation sets
     # Numv is number of images PER CLASS in an array size (2,classes)
-    #X_train = np.ndarray((classes, 103, window, window, 1))
+    #X_train = np.ndarray((classes, 103, window, win    dow, 1))
     #y_train = np.ndarray((classes))
     #X_val = np.ndarray((classes, 103, window, window, 1))
     #y_val = np.ndarray((classes))
@@ -72,20 +71,17 @@ def make_batch(X, y, num, classes, window):
             X_train.append(reshape(virt(samples_t[n, np.random.randint(0, 14)], 
                                       samples_t[n, np.random.randint(0, 14)])))
             y_train.append(n)
-
+            
     #print(X_train.shape, y_train.shape)
     print("val")
     for n in range(classes):
         print("Class: " + str(n))
-        gc.collect()
         print("a")
         for _ in range(num[1][n]):
             X_val.append(reshape(virt(samples_v[n, np.random.randint(0, 14)], 
                                       samples_v[n, np.random.randint(0, 14)])))
             y_val.append(n)
-        objgraph.show_most_common_types()
-
-        #tr.print_diff()
+            
 
     y_train = np_utils.to_categorical(y_train, 9)
     y_val = np_utils.to_categorical(y_val, 9)

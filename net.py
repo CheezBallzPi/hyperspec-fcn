@@ -1,7 +1,8 @@
 import keras
-import make_batch
+import tools
 from keras import layers as L
 from keras.models import Sequential
+from keras.utils import plot_model
 
 def data_to_img(data):
     return data
@@ -34,6 +35,7 @@ def net11():
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
+    plot_model(model, show_shapes=True, to_file='model.png')
     return model
 
 def net27():
@@ -66,4 +68,5 @@ def net27():
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
+    plot_model(model, show_shapes=True, to_file='model.png')
     return model

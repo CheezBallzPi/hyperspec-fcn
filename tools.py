@@ -17,6 +17,7 @@ def make_sample(img, x, y, window):
     ''' Given an (X, Y, Z), returns a (window, window, Z) '''
     hw = int(window / 2)
     sample = img[x - hw : x + hw + 1, y - hw : y + hw + 1, :]
+    print(sample.shape)
     return sample
 
 def virt_consts():

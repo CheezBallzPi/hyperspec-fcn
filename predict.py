@@ -33,3 +33,20 @@ def toImg(pred, shape, palette=None):
     print(palette)
     img.putpalette(palette)
     return img
+
+def compare(imga, imgb):
+    a = np.asarray(imga)
+    b = np.asarray(imgb)
+    print(a.shape, b.shape)
+    if a.shape != b.shape:
+        return None
+    c = np.zeros_like(a)
+    for x in range(a.shape[0]):
+        for y in range(a.shape[1]):
+            c[x,y] = 0 if a[x,y] == 0 or b[x,y] == 0 else (1 if a[x,y] == b[x,y] else 2)
+    fin = Image.fromarray(c, 'P')
+    fin.putpalette([0  , 0  , 0  ,
+                    0  , 254, 0  ,
+                    254, 0  , 0  ,])
+    return fin
+    

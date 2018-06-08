@@ -39,13 +39,14 @@ print(X_full.shape, y_full.shape, split)
 
 # Train!    
 logger = keras.callbacks.CSVLogger("logs/train.log")
-cp = keras.callbacks.ModelCheckpoint("./cp/weights.{epoch:02d}.hdf5", period=10)
-model.fit(X_full, y_full, batch_size=32, epochs=30, validation_split=split, callbacks=[logger,cp])
+cp = keras.callbacks.ModelCheckpoint("./cp/weights.{epoch:02d}.hdf5")
+model.fit(X_full, y_full, batch_size=32, epochs=15, validation_split=split, callbacks=[logger,cp])
 
 print("Predicting")
-p = predict.pred(X, "cp/weights.30.hdf5")
+p = predict.pred(X, "cp/weights.15.hdf5")
 print(p[3])
 i_p = predict.toImg(p, y.shape)
 i_gt = predict.toImg(y, y.shape, palette=i_p.getpalette())
 i_p.save("pred.png")
 i_gt.save("ground.png")
+predict.compare(i_p, i_gt).save("comp.png")

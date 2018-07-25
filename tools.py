@@ -15,11 +15,11 @@ def zeropad(X, offset, y=None):
 
 def make_sample(img, x, y, window):
     ''' Given an (X, Y, Z), returns a (window, window, Z) '''
-    return img[x : x + window - 1, y : y + window - 1, :]
+    return img[x : x + window, y : y + window, :]
 
 def make_sample_2d(img, x, y, window):
     ''' Given an (X, Y, Z), returns a (window, window, Z) 2d '''
-    return img[x : x + window - 1, y : y + window - 1]
+    return img[x : x + window, y : y + window]
 
 def virt_consts():
     ''' Creates the constants that are used in virt(). '''
@@ -44,58 +44,33 @@ def reshape2(smp):
     X = X[np.newaxis, ..., np.newaxis]
     return X
 
-def get_samples(X, y, num, classes, window): 
-    ''' Gets num samples from each class. '''
-    halfwindow = int(window / 2)
-    count = np.zeros(classes)
-    samples = np.ndarray((classes,num,window,window,103))
-    while(count.min() != num):
-        (xpos, ypos) = (np.random.randint(0, X.shape[0] - window),
-                        np.random.randint(0, X.shape[1] - window))
-        label = int(y[xpos + halfwindow, ypos + halfwindow])
-        if(label == 0):
-            continue
-        if(count[label - 1] != num):
-            samples[label - 1, int(count[label - 1])] = make_sample(X, xpos, ypos, window)
-            count[label - 1] += 1
-            #print('ylabel:', y[xpos, ypos])
-        #print(count)
-    #print(samples)
-
-    return samples
-
-def get_samples_const(X, num, window):
+def get_samples(X, y, num, window):
     ''' Gets num samples. '''
     count = 0
-    samples = np.ndarray((num, 2))
+    X_samples = np.ndarray((num, window, window, X.shape[2]))
+    y_samples = np.ndarray((num, window, window))
     while(count != num):
         (xpos, ypos) = (int(np.random.randint(0, X.shape[0] - window - 1)),
                         int(np.random.randint(0, X.shape[1] - window - 1)))
         # Instead of making actual images, return the positions instead.
-        samples[count, :] = (xpos, ypos)
+        X_samples[count] = make_sample(X, xpos, ypos, window) #+ np.random.random()
+        y_samples[count] = make_sample_2d(y, xpos, ypos, window)
         count += 1
-    return samples
+    return (X_samples, y_samples)
 
 def make_batch(X, y, num, window):
     ''' Converts img into a batch of all the data points to train on.
     Samples are 15 of each class.
     Also makes validation sets. '''
     
-    #X_train = np.ndarray((classes, 103, window, win    dow, 1))
+    #X_train = np.ndarray((classes, 103, window, window, 1))
     #y_train = np.ndarray((classes))
     #X_val = np.ndarray((classes, 103, window, window, 1))
     #y_val = np.ndarray((classes))
 
     print(X.shape)
     print(window)
-    X_train = get_samples_const(X, num[0], window)
-    X_val = get_samples_const(X, num[1], window)
+    X_train, y_train = get_samples(X, y, num[0], window)
+    X_val, y_val = get_samples(X, y, num[1], window)
 
-    X_cat = np.concatenate((X_train, X_val))
-    print(X_cat[0])
-    y_cat = [make_sample_2d(y, x[0], x[1], window) for x in X_cat.astype(int)]
-
-    print(X_cat.dtype)
-    print(X_cat, y_cat[0])
-
-    return X_cat, y_cat, (num[1] / (num[1] + num[0]))
+    return X_train, y_train, X_val, y_val

@@ -1,5 +1,5 @@
 import keras.models as md
-import tools
+import tools as t
 import numpy as np
 from numpy import random as rd
 from PIL import Image
@@ -7,18 +7,18 @@ from PIL import Image
 
 def pred(img, model):
     # Zero pad data
-    X = tools.zeropad(img, 5)
+    X = t.zeropad(img, 5)
     data = np.ndarray((img.shape[0] * img.shape[1],
                        103, 11, 11, 1), dtype=np.int32)
     count = 0
     for w in range(img.shape[0]):
         for h in range(img.shape[1]):
-            smp = tools.reshape(tools.make_sample(X, w+5, h+5, 11))
+            smp = t.reshape(t.make_sample(X, w+5, h+5, 11))
             data[count] = smp
             count += 1
     print("Start")
     return model.predict_classes(data, verbose=1)
-    # return [np.argmax(m.predict(tools.reshape2(z))) + 1 for z in data]
+    # return [np.argmax(m.predict(t.reshape2(z))) + 1 for z in data]
 
 
 def toImg(pred, shape, palette=None):

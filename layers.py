@@ -1,7 +1,7 @@
 from keras import backend as K
 from keras.engine.topology import Layer
 import numpy as np
-import tools
+import tools as t
 
 class GenSample(Layer):
     def __init__(self, image, window, **kwargs):
@@ -13,7 +13,8 @@ class GenSample(Layer):
         super(GenSample, self).build(input_shape)  # Be sure to call this at the end
 
     def call(self, x):
-        print(x.eval(session=K.get_session()))
+        print(x._keras_history[0].get_input_at(0))
+        #print(x.eval(session=K.get_session()))
         return self.image[int(x[:, 0]) : int(x[:, 0]) + self.window, int(x[:, 1]) : int(x[:, 1]) + self.window]
 
     def compute_output_shape(self, input_shape):
